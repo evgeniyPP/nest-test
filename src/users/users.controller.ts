@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
@@ -13,14 +13,21 @@ export class UsersController {
   @ApiOperation({ summary: 'Creates a new user' })
   @ApiResponse({ status: 200, type: User })
   @Post()
-  async create(@Body() dto: CreateUserDto): Promise<User> {
-    return await this.usersService.create(dto);
+  create(@Body() dto: CreateUserDto): Promise<User> {
+    return this.usersService.create(dto);
   }
 
   @ApiOperation({ summary: 'Returns all users' })
   @ApiResponse({ status: 200, type: [User] })
   @Get()
-  async findAll(): Promise<User[]> {
-    return await this.usersService.findAll();
+  findAll(): Promise<User[]> {
+    return this.usersService.findAll();
+  }
+
+  @ApiOperation({ summary: 'Returns a user by email' })
+  @ApiResponse({ status: 200, type: [User] })
+  @Get('/:email')
+  findOne(@Param('email') email: string): Promise<User> {
+    return this.usersService.findOne(email);
   }
 }

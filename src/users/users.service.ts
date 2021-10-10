@@ -16,10 +16,18 @@ export class UsersService {
     const user = await this.userRepo.create(dto);
     const role = await this.rolesService.findOne(this.rolesService.defaultRole);
     await user.$set('roles', [role.id]);
+    user.roles = [role];
     return user;
   }
 
   async findAll(): Promise<User[]> {
     return await this.userRepo.findAll({ include: { all: true } });
+  }
+
+  async findOne(email: string): Promise<User> {
+    return await this.userRepo.findOne({
+      where: { email },
+      include: { all: true },
+    });
   }
 }

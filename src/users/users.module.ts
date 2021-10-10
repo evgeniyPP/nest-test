@@ -12,5 +12,6 @@ import { UserRoles } from 'src/proxies/user-roles.model';
   imports: [SequelizeModule.forFeature([User, Role, UserRoles]), RolesModule],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [UsersService],
 })
 export class UsersModule {}
