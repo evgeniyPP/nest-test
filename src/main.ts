@@ -8,6 +8,7 @@ const configureSwagger = (app: INestApplication) => {
     .setTitle('Test NestJS Backend')
     .setDescription('REST API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api/docs', app, document);
