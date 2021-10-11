@@ -9,7 +9,10 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './users.model';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { PermittedRoles } from 'src/decorators/permitted-roles.decorator';
+import { Roles } from 'src/roles/roles';
 
 @ApiTags('users')
 @Controller('users')
@@ -19,7 +22,8 @@ export class UsersController {
   @ApiOperation({ summary: 'Creates a new user' })
   @ApiResponse({ status: 200, type: User })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @PermittedRoles(Roles.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Post()
   create(@Body() dto: CreateUserDto): Promise<User> {
     return this.usersService.create(dto);

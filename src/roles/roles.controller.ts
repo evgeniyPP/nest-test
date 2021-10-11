@@ -9,7 +9,10 @@ import {
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RolesService } from './roles.service';
 import { Role } from './roles.model';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { PermittedRoles } from 'src/decorators/permitted-roles.decorator';
+import { Roles } from './roles';
 
 @ApiTags('roles')
 @Controller('roles')
@@ -19,7 +22,8 @@ export class RolesController {
   @ApiOperation({ summary: 'Creates a new role' })
   @ApiResponse({ status: 200, type: Role })
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @PermittedRoles(Roles.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Post()
   create(@Body() dto: CreateRoleDto): Promise<Role> {
     return this.rolesService.create(dto);

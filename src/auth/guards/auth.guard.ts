@@ -18,22 +18,20 @@ export class AuthGuard implements CanActivate {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      this.throwUnauthorizedException();
+      throw new UnauthorizedException({
+        message: 'You are not authorised',
+      });
     }
 
     const [bearer, token] = authHeader.split(' ');
 
     if (bearer !== 'Bearer' || !token) {
-      this.throwUnauthorizedException();
+      throw new UnauthorizedException({
+        message: 'Invalid authorisation token',
+      });
     }
 
     req.user = this.jwtService.verify(token);
     return true;
-  }
-
-  private throwUnauthorizedException(): never {
-    throw new UnauthorizedException({
-      message: 'You are not authorised',
-    });
   }
 }
