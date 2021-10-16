@@ -27,6 +27,11 @@ export class AuthService {
     return this.generateToken(user);
   }
 
+  getCurrentUser(authHeader: string): User {
+    const token = this.getToken(authHeader);
+    return this.jwtService.verify(token) as User;
+  }
+
   private async validateUser(dto: CreateUserDto): Promise<User> {
     const user = await this.usersService.findOne(dto.email);
     const passwordsMatch = await compare(dto.password, user.password);
@@ -61,5 +66,17 @@ export class AuthService {
     return {
       token: this.jwtService.sign(payload),
     };
+  }
+
+  private getToken(authHeader: string): string {
+    const [bearer, token] = authHeader.split(' ');
+
+    if (bearer !== 'Bearer' || !token) {
+      throw new UnauthorizedException({
+        message: 'Invalid authorisation token',
+      });
+    }
+
+    return token;
   }
 }

@@ -4,12 +4,13 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
+
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(private authService: AuthService) {}
 
   canActivate(
     context: ExecutionContext,
@@ -23,15 +24,7 @@ export class AuthGuard implements CanActivate {
       });
     }
 
-    const [bearer, token] = authHeader.split(' ');
-
-    if (bearer !== 'Bearer' || !token) {
-      throw new UnauthorizedException({
-        message: 'Invalid authorisation token',
-      });
-    }
-
-    req.user = this.jwtService.verify(token);
+    req.user = this.authService.getCurrentUser(authHeader);
     return true;
   }
 }
