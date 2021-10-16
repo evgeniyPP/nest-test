@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UsePipes,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -15,6 +23,7 @@ import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { PermittedRoles } from 'src/decorators/permitted-roles.decorator';
 import { Roles } from 'src/roles/roles';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
 
 @ApiTags('users')
 @Controller('users')
@@ -24,6 +33,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Creates a new user' })
   @ApiResponse({ status: 200, type: User })
   @ApiBearerAuth()
+  @UsePipes(ValidationPipe)
   @PermittedRoles(Roles.Admin)
   @UseGuards(AuthGuard, RolesGuard)
   @Post()
