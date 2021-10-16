@@ -7,6 +7,8 @@ import {
 } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
+import { AddRoleDto } from './dto/add-role.dto';
+import { BanUserDto } from './dto/ban-user.dto';
 import { UsersService } from './users.service';
 import { User } from './users.model';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -45,5 +47,25 @@ export class UsersController {
   @Get('/:email')
   findOne(@Param('email') email: string): Promise<User> {
     return this.usersService.findOne(email);
+  }
+
+  @ApiOperation({ summary: 'Set a role to a user' })
+  @ApiResponse({ status: 200 })
+  @ApiBearerAuth()
+  @PermittedRoles(Roles.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Post('/:id/role')
+  addRole(@Param('id') userId: number, @Body() dto: AddRoleDto): Promise<User> {
+    return this.usersService.addRole(userId, dto);
+  }
+
+  @ApiOperation({ summary: 'Ban a user' })
+  @ApiResponse({ status: 200 })
+  @ApiBearerAuth()
+  @PermittedRoles(Roles.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Post('/:id/ban')
+  ban(@Param('id') userId: number, @Body() dto: BanUserDto): Promise<User> {
+    return this.usersService.ban(userId, dto);
   }
 }
